@@ -1,18 +1,14 @@
 package drummachine
 
-import (
-	"fmt"
-	"io"
-)
-
 func newGrid(beats, sub int) grid {
 	return grid{
 		steps: make([]step, beats*sub),
 	}
 }
 
-func (d *DrumSound) play(out io.Writer) {
-	fmt.Fprint(out, d.sound)
+// Play plays a sound on a device
+func (d *DrumSound) Play(out Device) {
+	out.Play(d.sound)
 }
 
 // NewKick creates a kick drum instrument

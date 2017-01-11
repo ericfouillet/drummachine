@@ -2,8 +2,6 @@ package drummachine
 
 import (
 	"context"
-	"fmt"
-	"io"
 	"strconv"
 	"strings"
 	"time"
@@ -41,7 +39,7 @@ func (s *Song) AddInstrument(steps []int, inst Instrument) {
 }
 
 // Play plays a song, repeating the grid steps indefinitely.
-func (s *Song) Play(ctx context.Context, out io.Writer) {
+func (s *Song) Play(ctx context.Context, out Device) {
 	interval := 60 * 1000 / (s.bpm * s.bar)
 	c := time.Tick(time.Duration(interval) * time.Millisecond)
 	var tick int
@@ -58,18 +56,13 @@ func (s *Song) Play(ctx context.Context, out io.Writer) {
 }
 
 // For now the sounds are not played, but only printed.
-func playStep(step step, out io.Writer) {
-	fmt.Fprint(out, "|")
+func playStep(step step, out Device) {
 	var played bool
-	for i, sound := range step.sounds {
-		if i > 0 {
-			fmt.Fprint(out, "+")
-		}
-		sound.play(out)
+	for _, sound := range step.sounds {
+		sound.Play(out)
 		played = true
 	}
 	if !played {
-		fmt.Fprint(out, "_")
+		out.Play("_")
 	}
-	fmt.Fprint(out, "|")
 }
